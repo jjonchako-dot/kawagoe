@@ -314,7 +314,27 @@
 
       const handleMapClick = (e, url) => {
         e.stopPropagation();
-        window.open(url, '_blank');
+        
+        // URLからクエリを抽出
+        const query = url.split('query=')[1];
+        const ua = navigator.userAgent.toLowerCase();
+        
+        // iPhone/iPad
+        if (/iphone|ipad|ipod/.test(ua)) {
+          window.location.href = `comgooglemaps://?q=${query}`;
+          // アプリがない場合のフォールバック
+          setTimeout(() => {
+            window.location.href = url;
+          }, 1500);
+        }
+        // Android
+        else if (/android/.test(ua)) {
+          window.location.href = `geo:0,0?q=${decodeURIComponent(query)}`;
+        }
+        // PC等
+        else {
+          window.open(url, '_blank');
+        }
       };
 
       const handleLinkClick = (e, url) => {
