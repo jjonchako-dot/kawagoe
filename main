@@ -1,0 +1,763 @@
+import React, { useState } from 'react';
+
+export default function KawagoeTripPlan() {
+  const [expandedId, setExpandedId] = useState(null);
+  const [expandedSpot, setExpandedSpot] = useState(null);
+  const [expandedFreeSpot, setExpandedFreeSpot] = useState(null);
+
+  const schedule = [
+    {
+      id: 1,
+      time: "9:30",
+      title: "川越駅",
+      emoji: "🚉",
+      subtitle: "旅のはじまり",
+      description: "東武東上線・JR川越線の川越駅からスタート！駅構内にはルミネ川越もあり、帰りのお土産購入にも便利です。",
+      duration: "徒歩20分",
+      category: "start",
+      mapUrl: "https://maps.google.com/?q=川越駅",
+    },
+    {
+      id: 2,
+      time: "10:00",
+      title: "川越熊野神社",
+      emoji: "⛩️",
+      subtitle: "開運・縁結びの神社",
+      highlights: ["足踏み健康ロード", "八咫烏", "銭洗弁財天"],
+      description: "1590年創建の開運・縁結びの神社。参道の「足踏み健康ロード」で裸足で歩くと足つぼを刺激！銭洗弁財天でお金を清めたり、運試し輪投げも人気。サッカー日本代表と同じ八咫烏がシンボル。",
+      hours: "9:00〜17:00（平日9:30〜）",
+      duration: "徒歩5分",
+      category: "shrine",
+      mapUrl: "https://maps.google.com/?q=川越熊野神社",
+    },
+    {
+      id: 3,
+      time: "10:30",
+      title: "大正浪漫夢通り",
+      emoji: "🏛️",
+      subtitle: "レトロモダンな商店街",
+      description: "大正から昭和初期の建築が残るレトロな商店街。映画のロケ地にもなった情緒ある通りで、おしゃれなカフェや雑貨店が並びます。シマノコーヒー大正館や小川菊（うなぎ）も有名。",
+      duration: "徒歩15分",
+      category: "walk",
+      mapUrl: "https://maps.google.com/?q=大正浪漫夢通り+川越",
+      spots: [
+        {
+          name: "eight.glänta kawagoe",
+          emoji: "💍",
+          description: "蔵造りの街並みにあるアクセサリー・指輪作り体験ができるお店。カップルや友達同士でオリジナルリングを手作りできます。カフェ・バーも併設。",
+          highlights: ["指輪作り体験", "アクセサリー", "カフェバー"],
+          hours: "10:00〜18:00",
+          closed: "火曜定休",
+          mapUrl: "https://maps.google.com/?q=eight+glanta+川越"
+        }
+      ]
+    },
+    {
+      id: 4,
+      time: "10:45",
+      title: "川越氷川神社",
+      emoji: "🎐",
+      subtitle: "縁結びの聖地",
+      highlights: ["縁結び玉", "鯛みくじ", "絵馬トンネル"],
+      description: "約1500年前に創建された縁結びの神様。境内の玉砂利を巫女が包んだ「縁結び玉」は毎朝8時から20体限定で無料配布！釣り竿で釣る「鯛みくじ」や絵馬トンネルも人気。夏は2000個以上の風鈴が彩る「縁むすび風鈴」が有名。",
+      hours: "8:00〜18:00",
+      tips: "💡 縁結び玉は朝8時限定！早起きして並ぶ価値あり",
+      duration: "徒歩15分",
+      category: "shrine",
+      mapUrl: "https://maps.google.com/?q=川越氷川神社",
+    },
+    {
+      id: 5,
+      time: "11:00",
+      title: "時の鐘",
+      emoji: "🔔",
+      subtitle: "川越のシンボル",
+      highlights: ["日本の音風景100選", "高さ約16m"],
+      description: "約400年前から時を告げる川越のランドマーク。高さ約16mの木造3層のやぐらで、現在も1日4回（6時・12時・15時・18時）鐘が鳴ります。環境省「残したい日本の音風景100選」に選定。",
+      hours: "見学自由（鐘は6:00/12:00/15:00/18:00）",
+      tips: "📸 12時の鐘に合わせて訪れると鐘の音が聴けます！",
+      category: "landmark",
+      mapUrl: "https://maps.google.com/?q=時の鐘+川越",
+    },
+  ];
+
+  // 12時以降の自由選択スポット
+  const freeSpots = {
+    lunch: {
+      title: "ランチ",
+      emoji: "🍜",
+      items: [
+        {
+          name: "茶そば 寿庵",
+          emoji: "🍜",
+          description: "1905年創業の老舗そば店。川越抹茶と北海道産そば粉を使った名物「河越抹茶そば」は透き通った緑色が美しい。7段に積み重なった「割子そば七段」は見た目も圧巻。",
+          highlights: ["河越抹茶そば", "割子そば七段"],
+          hours: "11:15〜20:00（L.O.19:00）",
+          closed: "水曜定休",
+          budget: "¥1,000〜1,500",
+          mapUrl: "https://maps.google.com/?q=寿庵+蔵のまち店+川越",
+        }
+      ]
+    },
+    sweets: {
+      title: "菓子屋横丁",
+      emoji: "🍠",
+      description: "明治時代から続く駄菓子屋が約20軒並ぶノスタルジックな横丁。環境省「かおり風景100選」に選定。",
+      items: [
+        {
+          name: "川越けんぴ工房直売店",
+          emoji: "🍟",
+          description: "菓匠右門が手掛ける揚げたて芋けんぴの専門店。目の前で揚げたてのホカホカ芋けんぴが味わえます。",
+          highlights: ["揚げたて芋けんぴ", "芋みつ味", "お芋ソフトクリーム"],
+          hours: "10:00〜17:00",
+          closed: "年末年始のみ休み",
+          budget: "食べ歩き用 ¥300〜",
+          mapUrl: "https://maps.google.com/?q=川越けんぴ工房直売店",
+          link: "https://www.g-call.com/shopping/pc/detail.php?gdp_no=36654"
+        },
+        {
+          name: "菓匠右門 菓子屋横丁店",
+          emoji: "🥮",
+          description: "川越銘菓「いも恋」の名店。さつまいもと粒あんをもちもちの生地で包んだ蒸したてが絶品。数量限定の「川越わらび餅」は作りたてのぷるぷる食感！",
+          highlights: ["蒸したていも恋", "川越わらび餅（限定）", "芋おこわ"],
+          hours: "10:00〜17:00",
+          closed: "年末年始のみ休み",
+          budget: "いも恋 ¥200",
+          mapUrl: "https://maps.google.com/?q=菓匠右門+菓子屋横丁店+川越"
+        },
+        {
+          name: "松陸製菓",
+          emoji: "🍓",
+          description: "江戸時代から続く老舗の飴屋。名物「生いちご飴」はパリッとした飴といちごの甘酸っぱさが絶妙！日本一長いふ菓子（95cm）の元祖としても有名。",
+          highlights: ["生いちご飴", "日本一長いふ菓子", "手作り飴"],
+          hours: "9:00〜19:00頃",
+          closed: "月曜定休",
+          budget: "生いちご飴 ¥500〜",
+          mapUrl: "https://maps.google.com/?q=松陸製菓+川越"
+        },
+        {
+          name: "川越ベーカリー楽楽",
+          emoji: "🥖",
+          description: "TVでも紹介された人気ベーカリー。看板商品「お味噌のパン」は埼玉県産秩父味噌を練り込んだサクサクのクッキー生地パン。1日500個以上売れることも！",
+          highlights: ["お味噌のパン", "いぶりがっこチーズ", "天然酵母"],
+          hours: "7:30〜17:00頃",
+          closed: "月曜定休",
+          budget: "¥200〜400",
+          mapUrl: "https://maps.google.com/?q=川越ベーカリー楽楽"
+        },
+        {
+          name: "稲葉屋本舗",
+          emoji: "🍩",
+          description: "創業昭和13年の老舗駄菓子店。名物「いもどうなつ」はサクッとした生地と甘さ控えめの芋餡が相性抜群。紫芋まんじゅうも人気。懐かしい駄菓子がずらり。",
+          highlights: ["いもどうなつ", "紫芋まんじゅう", "懐かしい駄菓子"],
+          hours: "9:00〜17:00",
+          closed: "不定休",
+          budget: "¥100〜300",
+          mapUrl: "https://maps.google.com/?q=稲葉屋本舗+川越"
+        },
+        {
+          name: "玉力製菓",
+          emoji: "🍬",
+          description: "創業100年以上、4代続く手作り飴の老舗。昔ながらの製法で作られる飴細工や組飴は職人技の結晶。ニッキやハッカ飴など懐かしい味が揃う。",
+          highlights: ["手作り飴細工", "組飴", "ニッキ・ハッカ飴"],
+          hours: "10:00〜17:00頃",
+          closed: "不定休",
+          budget: "¥100〜500",
+          mapUrl: "https://maps.google.com/?q=玉力製菓+川越"
+        },
+        {
+          name: "池田屋本店",
+          emoji: "🍡",
+          description: "城下町の雰囲気漂うだんご店。醤油の香ばしい焼きだんごは1本60円という驚きの価格！いもあんだんごも人気。お店の横にベンチあり。",
+          highlights: ["焼きだんご ¥60", "いもあんだんご", "コスパ最強"],
+          hours: "10:00〜17:00頃",
+          closed: "不定休",
+          budget: "¥60〜150",
+          mapUrl: "https://maps.google.com/?q=池田屋本店+川越+菓子屋横丁"
+        },
+        {
+          name: "窯出し蜜いも ほくほく",
+          emoji: "🥧",
+          description: "川越ベーカリー楽楽の新ブランド。窯で焼き上げたサクサクのパイ生地に、とろける蜜いものスイートポテトがたっぷり。TVでも紹介された人気店！",
+          highlights: ["スイートポテトパイ", "窯焼き", "蜜いも"],
+          hours: "10:00〜17:00頃",
+          closed: "月曜定休",
+          budget: "¥400〜500",
+          mapUrl: "https://maps.google.com/?q=窯出し蜜いも+ほくほく+川越"
+        }
+      ]
+    },
+    sightseeing: {
+      title: "観光スポット",
+      emoji: "🎭",
+      items: [
+        {
+          name: "川越まつり会館",
+          emoji: "🎭",
+          description: "国の重要無形民俗文化財「川越まつり」の魅力を体感できる施設。実際に祭りで曳かれる豪華絢爛な山車2台を常時展示。大型スクリーンで祭りの臨場感を味わえます。",
+          highlights: ["本物の山車展示", "囃子実演（日祝）", "大型スクリーン映像"],
+          hours: "9:30〜18:30（10〜3月は〜17:30）",
+          closed: "第2・4水曜定休",
+          budget: "大人¥300 / 小中学生¥100",
+          tips: "🎵 日曜・祝日の13:30と14:30に囃子の実演あり！",
+          mapUrl: "https://maps.google.com/?q=川越まつり会館"
+        }
+      ]
+    },
+    cafe: {
+      title: "時の鐘周辺カフェ",
+      emoji: "☕",
+      description: "蔵造りの街並みに溶け込む個性豊かなカフェたち。お好みで選んでね！",
+      items: [
+        {
+          name: "1901 TEA SALON",
+          emoji: "🍵",
+          description: "1901年築の土蔵造りを2022年にリノベーションした和カフェ。狭山茶を鉄急須でいただけます。一番人気は濃厚な「川越抹茶ババロア」。",
+          highlights: ["川越抹茶ババロア", "狭山茶", "築120年の蔵"],
+          hours: "11:00〜18:00",
+          closed: "火〜金休み（土日月祝のみ営業）",
+          budget: "¥1,000〜1,500",
+          tips: "⚠️ 週末のみ営業！平日は休みなので注意",
+          mapUrl: "https://maps.google.com/?q=1901+TEA+SALON+川越",
+        },
+        {
+          name: "エレバート",
+          emoji: "🍺",
+          description: "大正4年（1915年）築の川越市指定有形文化財「田中家住宅」をリノベーション。レトロモダンな洋館で川越クラフトビール「COEDO」全6種が樽生で楽しめます。",
+          highlights: ["COEDOビール全6種", "さつまいもプリン", "だし巻き玉子サンド"],
+          hours: "11:30〜18:00（L.O.17:30）",
+          closed: "水曜定休",
+          budget: "¥1,000〜2,000",
+          mapUrl: "https://maps.google.com/?q=アートカフェエレバート+川越",
+        },
+        {
+          name: "une brise（ユヌブリーズ）",
+          emoji: "💐",
+          description: "明治33年築の蔵をリノベーションしたドライフラワーショップ＆カフェ。フランス語で「優しいそよ風」を意味する店名。100種類以上のドライフラワーに囲まれた空間。",
+          highlights: ["シフォンケーキ", "100種以上のドライフラワー", "蔵カフェ"],
+          hours: "11:00〜17:00",
+          closed: "月曜定休",
+          budget: "¥800〜1,500",
+          mapUrl: "https://maps.google.com/?q=ユヌブリーズ+川越",
+        },
+      ]
+    },
+    omiyage: {
+      title: "お土産",
+      emoji: "🎁",
+      items: [
+        {
+          name: "小江戸蔵里（明治蔵）",
+          emoji: "🎁",
+          description: "旧鏡山酒造の酒蔵を改装した観光施設。明治・大正・昭和期に建てられた3つの蔵があり、「明治蔵」では川越の特産品やお土産が揃います。「昭和蔵」では埼玉の地酒を有料試飲も！",
+          highlights: ["国登録有形文化財", "川越銘菓", "地酒試飲"],
+          hours: "10:00〜18:00",
+          mapUrl: "https://maps.google.com/?q=小江戸蔵里+川越",
+          nearby: [
+            {
+              name: "のびねこ",
+              emoji: "🐱",
+              description: "猫好きにはたまらない猫雑貨専門店。可愛い猫モチーフの雑貨やアクセサリーが揃います。お土産にもぴったり！",
+            }
+          ]
+        }
+      ]
+    }
+  };
+
+  const categoryColors = {
+    start: "from-slate-600 to-slate-800",
+    shrine: "from-red-500 to-orange-600",
+    walk: "from-amber-500 to-yellow-600",
+    landmark: "from-indigo-500 to-purple-600",
+    food: "from-emerald-500 to-teal-600",
+    sweets: "from-pink-400 to-rose-500",
+    shop: "from-cyan-500 to-blue-500",
+    cafe: "from-orange-400 to-amber-500",
+  };
+
+  const handleMapClick = (e, url) => {
+    e.stopPropagation();
+    window.open(url, '_blank');
+  };
+
+  const handleLinkClick = (e, url) => {
+    e.stopPropagation();
+    window.open(url, '_blank');
+  };
+
+  const toggleSpot = (e, spotIndex, parentId) => {
+    e.stopPropagation();
+    const key = `${parentId}-${spotIndex}`;
+    setExpandedSpot(expandedSpot === key ? null : key);
+  };
+
+  const toggleFreeSpot = (e, key) => {
+    e.stopPropagation();
+    setExpandedFreeSpot(expandedFreeSpot === key ? null : key);
+  };
+
+  const renderFreeSpotItem = (item, key) => (
+    <div 
+      key={key}
+      className="bg-white/5 rounded-xl border border-white/10 overflow-hidden"
+    >
+      <div 
+        className="p-3 cursor-pointer flex items-center gap-3"
+        onClick={(e) => toggleFreeSpot(e, key)}
+      >
+        <span className="text-2xl">{item.emoji}</span>
+        <div className="flex-1 min-w-0">
+          <h4 className="text-white font-medium text-sm">{item.name}</h4>
+          {item.highlights && (
+            <p className="text-stone-400 text-xs truncate">
+              {item.highlights.slice(0, 2).join(' / ')}
+            </p>
+          )}
+        </div>
+        <div className={`text-stone-500 text-xs transition-transform duration-300 ${expandedFreeSpot === key ? 'rotate-180' : ''}`}>
+          ▼
+        </div>
+      </div>
+
+      {expandedFreeSpot === key && (
+        <div className="px-3 pb-3 border-t border-white/5 pt-2 animate-fadeIn">
+          {item.description && (
+            <p className="text-stone-300 text-xs mb-2 leading-relaxed">{item.description}</p>
+          )}
+
+          {item.highlights && (
+            <div className="flex flex-wrap gap-1 mb-2">
+              {item.highlights.map((h, hi) => (
+                <span key={hi} className="bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full text-xs">
+                  {h}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {item.hours && (
+            <div className="flex items-center gap-2 text-xs mb-1">
+              <span className="text-green-400">🕐</span>
+              <span className="text-stone-300">{item.hours}</span>
+            </div>
+          )}
+
+          {item.closed && (
+            <div className="flex items-center gap-2 text-xs mb-1">
+              <span className="text-red-400">⚠️</span>
+              <span className="text-stone-400">{item.closed}</span>
+            </div>
+          )}
+
+          {item.budget && (
+            <div className="flex items-center gap-2 text-xs mb-1">
+              <span className="text-yellow-400">💰</span>
+              <span className="text-stone-300">{item.budget}</span>
+            </div>
+          )}
+
+          {item.tips && (
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-2 mb-2">
+              <p className="text-amber-200 text-xs">{item.tips}</p>
+            </div>
+          )}
+
+          {/* Nearby spots */}
+          {item.nearby && item.nearby.length > 0 && (
+            <div className="mt-2 mb-2">
+              <p className="text-stone-500 text-xs mb-1">近くのスポット:</p>
+              {item.nearby.map((nb, nbi) => (
+                  <div key={nbi} className="flex items-center gap-2 text-xs bg-white/5 rounded-lg p-2">
+                  <span>{nb.emoji}</span>
+                  <div className="flex-1">
+                    <span className="text-stone-300">{nb.name}</span>
+                    <p className="text-stone-400 text-xs">{nb.description}</p>
+                  </div>
+                  {nb.mapUrl && (
+                    <button
+                      onClick={(e) => handleMapClick(e, nb.mapUrl)}
+                      className="text-blue-400 text-xs"
+                    >
+                      📍
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {item.link && (
+            <button
+              onClick={(e) => handleLinkClick(e, item.link)}
+              className="text-amber-400 text-xs hover:text-amber-300 transition-colors mb-2 flex items-center gap-1"
+            >
+              🔗 詳細を見る
+            </button>
+          )}
+
+          {item.mapUrl && (
+            <button
+              onClick={(e) => handleMapClick(e, item.mapUrl)}
+              className="w-full flex items-center justify-center gap-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 py-2 px-3 rounded-lg transition-all duration-200 active:scale-95 text-xs"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
+              <span className="font-medium">Google Mapsで開く</span>
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-stone-900 via-stone-800 to-stone-900 text-white relative overflow-hidden">
+      {/* Background Pattern */}
+      <div 
+        className="absolute inset-0 opacity-5"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30z' fill='%23fff' fill-opacity='0.4'/%3E%3C/svg%3E")`,
+          backgroundSize: '30px 30px'
+        }}
+      />
+      
+      {/* Floating Decorations */}
+      <div className="absolute top-20 right-4 text-6xl opacity-20 animate-pulse">🏯</div>
+      <div className="absolute top-80 left-2 text-4xl opacity-15 animate-bounce" style={{ animationDuration: '3s' }}>🍂</div>
+      <div className="absolute bottom-40 right-8 text-5xl opacity-15 animate-pulse" style={{ animationDelay: '1s' }}>🎋</div>
+
+      {/* Header */}
+      <header className="relative pt-12 pb-8 px-6 text-center">
+        <div className="inline-block mb-4">
+          <span className="text-5xl animate-bounce inline-block" style={{ animationDuration: '2s' }}>🏮</span>
+        </div>
+        <h1 
+          className="text-4xl font-black tracking-tight mb-2"
+          style={{ 
+            fontFamily: "'Noto Serif JP', serif",
+            background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            textShadow: '0 0 40px rgba(251, 191, 36, 0.3)'
+          }}
+        >
+          川越さんぽ
+        </h1>
+        <p className="text-stone-400 text-sm tracking-widest">〜 小江戸日帰り旅 〜</p>
+        
+        {/* Date Badge */}
+        <div className="mt-6 inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
+          <span className="text-amber-400">📅</span>
+          <span className="text-sm text-stone-300">日帰りプラン</span>
+        </div>
+      </header>
+
+      {/* Timeline - Morning Schedule */}
+      <main className="relative px-4 pb-8">
+        <div className="max-w-lg mx-auto">
+          
+          {/* Morning Section Header */}
+          <div className="mb-4 flex items-center gap-2">
+            <span className="text-lg">🌅</span>
+            <h2 className="text-stone-300 font-medium">午前のスケジュール</h2>
+            <div className="flex-1 h-px bg-gradient-to-r from-amber-500/50 to-transparent"></div>
+          </div>
+
+          {schedule.map((item, index) => (
+            <div 
+              key={item.id} 
+              className="relative pl-8 pb-6"
+              style={{
+                animation: 'fadeInUp 0.5s ease-out forwards',
+                animationDelay: `${index * 0.1}s`,
+                opacity: 0
+              }}
+            >
+              {/* Timeline Line */}
+              {index < schedule.length - 1 && (
+                <div className="absolute left-[11px] top-12 bottom-0 w-0.5 bg-gradient-to-b from-amber-500/50 to-transparent" />
+              )}
+              
+              {/* Timeline Dot */}
+              <div className={`absolute left-0 top-2 w-6 h-6 rounded-full bg-gradient-to-br ${categoryColors[item.category]} shadow-lg shadow-amber-500/20 flex items-center justify-center`}>
+                <div className="w-2 h-2 bg-white rounded-full" />
+              </div>
+
+              {/* Card */}
+              <div 
+                className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] active:scale-[0.98]"
+                onClick={() => setExpandedId(expandedId === item.id ? null : item.id)}
+              >
+                {/* Card Header */}
+                <div className="p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="text-3xl">{item.emoji}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-amber-400 text-xs font-bold tracking-wider">{item.time}</span>
+                        {item.duration && (
+                          <span className="text-stone-500 text-xs">→ {item.duration}</span>
+                        )}
+                      </div>
+                      <h3 className="text-lg font-bold text-white truncate">{item.title}</h3>
+                      <p className="text-stone-400 text-sm">{item.subtitle}</p>
+                    </div>
+                    <div className={`text-stone-500 transition-transform duration-300 ${expandedId === item.id ? 'rotate-180' : ''}`}>
+                      ▼
+                    </div>
+                  </div>
+
+                  {/* Highlight Badges */}
+                  {item.highlights && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {item.highlights.map((highlight, i) => (
+                        <span key={i} className="inline-flex items-center gap-1 bg-amber-500/20 text-amber-300 px-2 py-1 rounded-full text-xs font-medium">
+                          ✨ {highlight}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Expanded Content */}
+                {expandedId === item.id && (
+                  <div className="px-4 pb-4 border-t border-white/5 pt-3 animate-fadeIn">
+                    {item.description && (
+                      <p className="text-stone-300 text-sm mb-3 leading-relaxed">{item.description}</p>
+                    )}
+                    
+                    {/* Hours */}
+                    {item.hours && (
+                      <div className="flex items-center gap-2 text-sm mb-2">
+                        <span className="text-green-400">🕐</span>
+                        <span className="text-stone-300">{item.hours}</span>
+                      </div>
+                    )}
+                    
+                    {/* Closed Days */}
+                    {item.closed && (
+                      <div className="flex items-center gap-2 text-sm mb-2">
+                        <span className="text-red-400">⚠️</span>
+                        <span className="text-stone-400">{item.closed}</span>
+                      </div>
+                    )}
+
+                    {/* Tips */}
+                    {item.tips && (
+                      <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 mb-3">
+                        <p className="text-amber-200 text-sm">{item.tips}</p>
+                      </div>
+                    )}
+
+                    {/* Spots - 立ち寄りスポット */}
+                    {item.spots && item.spots.length > 0 && (
+                      <div className="mt-4 space-y-2">
+                        <p className="text-stone-500 text-xs font-medium mb-2">📍 立ち寄りスポット</p>
+                        {item.spots.map((spot, spotIndex) => (
+                          <div 
+                            key={spotIndex}
+                            className="bg-white/5 rounded-xl border border-white/10 overflow-hidden"
+                          >
+                            <div 
+                              className="p-3 cursor-pointer flex items-center gap-3"
+                              onClick={(e) => toggleSpot(e, spotIndex, item.id)}
+                            >
+                              <span className="text-xl">{spot.emoji}</span>
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-white font-medium text-sm truncate">{spot.name}</h4>
+                                {spot.highlights && (
+                                  <p className="text-stone-400 text-xs truncate">
+                                    {spot.highlights.slice(0, 2).join(' / ')}
+                                  </p>
+                                )}
+                              </div>
+                              <div className={`text-stone-500 text-xs transition-transform duration-300 ${expandedSpot === `${item.id}-${spotIndex}` ? 'rotate-180' : ''}`}>
+                                ▼
+                              </div>
+                            </div>
+
+                            {expandedSpot === `${item.id}-${spotIndex}` && (
+                              <div className="px-3 pb-3 border-t border-white/5 pt-2 animate-fadeIn">
+                                {spot.description && (
+                                  <p className="text-stone-300 text-xs mb-2 leading-relaxed">{spot.description}</p>
+                                )}
+
+                                {spot.highlights && (
+                                  <div className="flex flex-wrap gap-1 mb-2">
+                                    {spot.highlights.map((h, hi) => (
+                                      <span key={hi} className="bg-pink-500/20 text-pink-300 px-2 py-0.5 rounded-full text-xs">
+                                        {h}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {spot.hours && (
+                                  <div className="flex items-center gap-2 text-xs mb-1">
+                                    <span className="text-green-400">🕐</span>
+                                    <span className="text-stone-300">{spot.hours}</span>
+                                  </div>
+                                )}
+
+                                {spot.closed && (
+                                  <div className="flex items-center gap-2 text-xs mb-1">
+                                    <span className="text-red-400">⚠️</span>
+                                    <span className="text-stone-400">{spot.closed}</span>
+                                  </div>
+                                )}
+
+                                {spot.mapUrl && (
+                                  <button
+                                    onClick={(e) => handleMapClick(e, spot.mapUrl)}
+                                    className="w-full flex items-center justify-center gap-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 py-2 px-3 rounded-lg transition-all duration-200 active:scale-95 text-xs"
+                                  >
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                    </svg>
+                                    <span className="font-medium">Google Mapsで開く</span>
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Google Maps Button */}
+                    {item.mapUrl && (
+                      <button
+                        onClick={(e) => handleMapClick(e, item.mapUrl)}
+                        className="w-full mt-2 flex items-center justify-center gap-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 py-3 px-4 rounded-xl transition-all duration-200 active:scale-95"
+                      >
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                        <span className="font-medium">Google Mapsで開く</span>
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Free Choice Section - 12時以降 */}
+        <div className="max-w-lg mx-auto mt-8">
+          {/* Section Header */}
+          <div className="mb-6 text-center">
+            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 px-6 py-3 rounded-2xl border border-amber-500/30">
+              <span className="text-2xl">✨</span>
+              <div>
+                <h2 className="text-amber-300 font-bold text-lg">12:00〜 フリータイム</h2>
+                <p className="text-stone-400 text-xs">気分で選んで楽しもう！</p>
+              </div>
+              <span className="text-2xl">✨</span>
+            </div>
+          </div>
+
+          {/* Free Spots Categories */}
+          <div className="space-y-6">
+            
+            {/* Lunch */}
+            <div className="bg-emerald-500/10 rounded-2xl border border-emerald-500/30 p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-2xl">{freeSpots.lunch.emoji}</span>
+                <h3 className="text-emerald-300 font-bold">{freeSpots.lunch.title}</h3>
+              </div>
+              <div className="space-y-2">
+                {freeSpots.lunch.items.map((item, i) => renderFreeSpotItem(item, `lunch-${i}`))}
+              </div>
+            </div>
+
+            {/* Sweets - 菓子屋横丁 */}
+            <div className="bg-pink-500/10 rounded-2xl border border-pink-500/30 p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-2xl">{freeSpots.sweets.emoji}</span>
+                <h3 className="text-pink-300 font-bold">{freeSpots.sweets.title}</h3>
+              </div>
+              <p className="text-stone-400 text-xs mb-3">{freeSpots.sweets.description}</p>
+              <div className="space-y-2">
+                {freeSpots.sweets.items.map((item, i) => renderFreeSpotItem(item, `sweets-${i}`))}
+              </div>
+            </div>
+
+            {/* Sightseeing - 観光スポット */}
+            <div className="bg-purple-500/10 rounded-2xl border border-purple-500/30 p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-2xl">{freeSpots.sightseeing.emoji}</span>
+                <h3 className="text-purple-300 font-bold">{freeSpots.sightseeing.title}</h3>
+              </div>
+              <div className="space-y-2">
+                {freeSpots.sightseeing.items.map((item, i) => renderFreeSpotItem(item, `sightseeing-${i}`))}
+              </div>
+            </div>
+
+            {/* Cafe - 時の鐘周辺カフェ */}
+            <div className="bg-orange-500/10 rounded-2xl border border-orange-500/30 p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-2xl">{freeSpots.cafe.emoji}</span>
+                <h3 className="text-orange-300 font-bold">{freeSpots.cafe.title}</h3>
+              </div>
+              <p className="text-stone-400 text-xs mb-3">{freeSpots.cafe.description}</p>
+              <div className="space-y-2">
+                {freeSpots.cafe.items.map((item, i) => renderFreeSpotItem(item, `cafe-${i}`))}
+              </div>
+            </div>
+
+            {/* Omiyage */}
+            <div className="bg-cyan-500/10 rounded-2xl border border-cyan-500/30 p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-2xl">{freeSpots.omiyage.emoji}</span>
+                <h3 className="text-cyan-300 font-bold">{freeSpots.omiyage.title}</h3>
+              </div>
+              <div className="space-y-2">
+                {freeSpots.omiyage.items.map((item, i) => renderFreeSpotItem(item, `omiyage-${i}`))}
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-10 text-center">
+          <div className="inline-flex items-center gap-2 text-stone-500 text-sm">
+            <span>🍁</span>
+            <span>素敵な一日を！</span>
+            <span>🍁</span>
+          </div>
+          <p className="text-stone-600 text-xs mt-2">※営業時間は変更の可能性があります</p>
+          <p className="text-stone-600 text-xs">※1901 TEA SALONは土日月祝のみ営業</p>
+        </div>
+      </main>
+
+      {/* Custom Animations */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&display=swap');
+        
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-out;
+        }
+      `}</style>
+    </div>
+  );
+}
